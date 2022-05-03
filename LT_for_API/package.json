@@ -10,5 +10,8 @@
     "@slidev/theme-default": "*",
     "@slidev/theme-seriph": "*"
   },
-  "name": "lt-for-api"
+  "name": "lt-for-api",
+  "devDependencies": {
+    "@iconify-json/ion": "^1.1.1"
+  }
 }
