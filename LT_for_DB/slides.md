@@ -21,363 +21,415 @@ drawings:
   persist: false
 ---
 
-# Welcome to Slidev
-
-Presentation slides for developers
-
-<div class="pt-12">
-  <span @click="$slidev.nav.next" class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
-    Press Space for next page <carbon:arrow-right class="inline"/>
-  </span>
-</div>
-
-<div class="abs-br m-6 flex gap-2">
-  <button @click="$slidev.nav.openInEditor()" title="Open in Editor" class="text-xl icon-btn opacity-50 !border-none !hover:text-white">
-    <carbon:edit />
-  </button>
-  <a href="https://github.com/slidevjs/slidev" target="_blank" alt="GitHub"
-    class="text-xl icon-btn opacity-50 !border-none !hover:text-white">
-    <carbon-logo-github />
-  </a>
-</div>
-
-<!--
-The last comment block of each slide will be treated as slide notes. It will be visible and editable in Presenter Mode along with the slide. [Read more in the docs](https://sli.dev/guide/syntax.html#notes)
--->
+# 実践的データモデリング入門
 
 ---
 
-# What is Slidev?
+# データベースの論理設計
 
-Slidev is a slides maker and presenter designed for developers, consist of the following features
+<div>
 
-- 📝 **Text-based** - focus on the content with Markdown, and then style them later
-- 🎨 **Themable** - theme can be shared and used with npm packages
-- 🧑‍💻 **Developer Friendly** - code highlighting, live coding with autocompletion
-- 🤹 **Interactive** - embedding Vue components to enhance your expressions
-- 🎥 **Recording** - built-in recording and camera view
-- 📤 **Portable** - export into PDF, PNGs, or even a hostable SPA
-- 🛠 **Hackable** - anything possible on a webpage
+アプリケーションの設計には多くのベストプラクティスがある。
 
-<br>
-<br>
+しかしデータベースの論理設計の方法を体型的にを教えてくれる物は少ない。
 
-Read more about [Why Slidev?](https://sli.dev/guide/why)
+なので感覚的に設計をしてしまうことが多いが実はそれは恐ろしい。
 
-<!--
-You can have `style` tag in markdown to override the style for the current page.
-Learn more: https://sli.dev/guide/syntax#embedded-styles
--->
+なぜなら一度作成したテーブルの設計を途中で変えるのは、
+
+アプリケーションの修正とは比べ物にならないほどに影響範囲が大きい。
+
+<br />
+
+&rarr; 初めから確度の高いテーブル設計ができるように論理設計の手法を学ぶ
+
+</div>
+
+---
+layout: two-cols
+---
+
+<template v-slot:default>
+
+# 参考にした図書
 
 <style>
-h1 {
-  background-color: #2B90B6;
-  background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
-  background-size: 100%;
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -moz-text-fill-color: transparent;
+.image {
+  text-align: center;
+}
+img {
+  width: 70%;
+  height: 70%;
 }
 </style>
 
----
+<div class="image">
+  <img border="rounded" src="実践的データモデリング入門.jpg">
+</div>
 
-# Navigation
+</template>
+<template v-slot:right>
 
-Hover on the bottom-left corner to see the navigation's controls panel, [learn more](https://sli.dev/guide/navigation.html)
+[実践的データモデリング入門](https://www.amazon.co.jp/%E5%AE%9F%E8%B7%B5%E7%9A%84%E3%83%87%E3%83%BC%E3%82%BF%E3%83%A2%E3%83%87%E3%83%AA%E3%83%B3%E3%82%B0%E5%85%A5%E9%96%80-DB-magazine-selection-%E7%9C%9F%E9%87%8E/dp/4798103853/ref=sr_1_1?__mk_ja_JP=%E3%82%AB%E3%82%BF%E3%82%AB%E3%83%8A&crid=3ABFLARSAHY98&keywords=%E5%AE%9F%E8%B7%B5%E7%9A%84%E3%83%87%E3%83%BC%E3%82%BF%E3%83%A2%E3%83%87%E3%83%AA%E3%83%B3%E3%82%B0%E5%85%A5%E9%96%80&qid=1651626715&sprefix=%E5%AE%9F%E8%B7%B5%E7%9A%84%E3%83%87%E3%83%BC%E3%82%BF%E3%83%A2%E3%83%87%E3%83%AA%E3%83%B3%E3%82%B0%E5%85%A5%E9%96%80%2Caps%2C219&sr=8-1)
 
-### Keyboard Shortcuts
+DB の物理設計についての本はいろいろあるが、論理設計の部分にフォーカスしたちょっと珍しい本。
 
-|     |     |
-| --- | --- |
-| <kbd>right</kbd> / <kbd>space</kbd>| next animation or slide |
-| <kbd>left</kbd>  / <kbd>shift</kbd><kbd>space</kbd> | previous animation or slide |
-| <kbd>up</kbd> | previous slide |
-| <kbd>down</kbd> | next slide |
+2003 年発売の古い本ではあるが、DB の論理設計の部分だけ見れば普遍的な内容が書かれている。
 
-<!-- https://sli.dev/guide/animations.html#click-animations -->
-<img
-  v-click
-  class="absolute -bottom-9 -left-7 w-80 opacity-50"
-  src="https://sli.dev/assets/arrow-bottom-left.svg"
-/>
-<p v-after class="absolute bottom-23 left-45 opacity-30 transform -rotate-10">Here!</p>
-
----
-layout: image-right
-image: https://source.unsplash.com/collection/94734566/1920x1080
----
-
-# Code
-
-Use code snippets and get the highlighting directly![^1]
-
-```ts {all|2|1-6|9|all}
-interface User {
-  id: number
-  firstName: string
-  lastName: string
-  role: string
-}
-
-function updateUser(id: number, update: User) {
-  const user = getUser(id)
-  const newUser = { ...user, ...update }
-  saveUser(id, newUser)
-}
-```
-
-<arrow v-click="3" x1="400" y1="420" x2="230" y2="330" color="#564" width="3" arrowSize="1" />
-
-[^1]: [Learn More](https://sli.dev/guide/syntax.html#line-highlighting)
-
-<style>
-.footnotes-sep {
-  @apply mt-20 opacity-10;
-}
-.footnotes {
-  @apply text-sm opacity-75;
-}
-.footnote-backref {
-  display: none;
-}
-</style>
+</template>
 
 ---
 
-# Components
+# データベース論理設計の流れ
 
-<div grid="~ cols-2 gap-4">
 <div>
 
-You can use Vue components directly inside your slides.
+```mermaid {scale: 0.8}
+graph TD
 
-We have provided a few built-in components like `<Tweet/>` and `<Youtube/>` that you can use directly. And adding your custom components is also super easy.
+subgraph トップダウンモデリング
+A[ビジネス分析] --> B[エンティティモデルの作成]
+B --> C[主要属性モデルの作成]
+end
 
-```html
-<Counter :count="10" />
+subgraph ボトムアップモデリング
+D[画面/帳票単位のデータ分析] --> E[データ項目間の関連把握]
+D --> F[主キー識別]
+D --> G[エンティティへの割り当て]
+E[データ項目間の関連把握] --> H[正規化モデルの作成]
+F[主キー識別] --> H[正規化モデルの作成]
+G[エンティティへの割り当て] --> H[正規化モデルの作成]
+end
+
+H --> I[モデルの統合]
+C --> I
 ```
 
-<!-- ./components/Counter.vue -->
-<Counter :count="10" m="t-4" />
-
-Check out [the guides](https://sli.dev/builtin/components.html) for more.
-
-</div>
-<div>
-
-```html
-<Tweet id="1390115482657726468" />
-```
-
-<Tweet id="1390115482657726468" scale="0.65" />
-
-</div>
-</div>
-
-
----
-class: px-20
----
-
-# Themes
-
-Slidev comes with powerful theming support. Themes can provide styles, layouts, components, or even configurations for tools. Switching between themes by just **one edit** in your frontmatter:
-
-<div grid="~ cols-2 gap-2" m="-t-2">
-
-```yaml
----
-theme: default
----
-```
-
-```yaml
----
-theme: seriph
----
-```
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-default/01.png?raw=true">
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-seriph/01.png?raw=true">
-
-</div>
-
-Read more about [How to use a theme](https://sli.dev/themes/use.html) and
-check out the [Awesome Themes Gallery](https://sli.dev/themes/gallery.html).
-
----
-preload: false
----
-
-# Animations
-
-Animations are powered by [@vueuse/motion](https://motion.vueuse.org/).
-
-```html
-<div
-  v-motion
-  :initial="{ x: -80 }"
-  :enter="{ x: 0 }">
-  Slidev
-</div>
-```
-
-<div class="w-60 relative mt-6">
-  <div class="relative w-40 h-40">
-    <img
-      v-motion
-      :initial="{ x: 800, y: -100, scale: 1.5, rotate: -50 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-square.png"
-    />
-    <img
-      v-motion
-      :initial="{ y: 500, x: -100, scale: 2 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-circle.png"
-    />
-    <img
-      v-motion
-      :initial="{ x: 600, y: 400, scale: 2, rotate: 100 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-triangle.png"
-    />
-  </div>
-
-  <div
-    class="text-5xl absolute top-14 left-40 text-[#2B90B6] -z-1"
-    v-motion
-    :initial="{ x: -80, opacity: 0}"
-    :enter="{ x: 0, opacity: 1, transition: { delay: 2000, duration: 1000 } }">
-    Slidev
-  </div>
-</div>
-
-<!-- vue script setup scripts can be directly used in markdown, and will only affects current page -->
-<script setup lang="ts">
-const final = {
-  x: 0,
-  y: 0,
-  rotate: 0,
-  scale: 1,
-  transition: {
-    type: 'spring',
-    damping: 10,
-    stiffness: 20,
-    mass: 2
-  }
-}
-</script>
-
-<div
-  v-motion
-  :initial="{ x:35, y: 40, opacity: 0}"
-  :enter="{ y: 0, opacity: 1, transition: { delay: 3500 } }">
-
-[Learn More](https://sli.dev/guide/animations.html#motion)
-
 </div>
 
 ---
-
-# LaTeX
-
-LaTeX is supported out-of-box powered by [KaTeX](https://katex.org/).
-
-<br>
-
-Inline $\sqrt{3x-1}+(1+x)^2$
-
-Block
-$$
-\begin{array}{c}
-
-\nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} &
-= \frac{4\pi}{c}\vec{\mathbf{j}}    \nabla \cdot \vec{\mathbf{E}} & = 4 \pi \rho \\
-
-\nabla \times \vec{\mathbf{E}}\, +\, \frac1c\, \frac{\partial\vec{\mathbf{B}}}{\partial t} & = \vec{\mathbf{0}} \\
-
-\nabla \cdot \vec{\mathbf{B}} & = 0
-
-\end{array}
-$$
-
-<br>
-
-[Learn more](https://sli.dev/guide/syntax#latex)
-
+layout: two-cols
 ---
 
-# Diagrams
+<template v-slot:default>
 
-You can create diagrams / graphs from textual descriptions, directly in your Markdown.
-
-<div class="grid grid-cols-3 gap-10 pt-4 -mb-6">
+# ボトムアップモデリング
 
 ```mermaid {scale: 0.5}
-sequenceDiagram
-    Alice->John: Hello John, how are you?
-    Note over Alice,John: A typical interaction
-```
-
-```mermaid {theme: 'neutral', scale: 0.8}
 graph TD
-B[Text] --> C{Decision}
-C -->|One| D[Result 1]
-C -->|Two| E[Result 2]
+
+subgraph ボトムアップモデリング
+D[画面/帳票単位のデータ分析] --> E[データ項目間の関連把握]
+D --> F[主キー識別]
+D --> G[エンティティへの割り当て]
+E[データ項目間の関連把握] --> H[正規化モデルの作成]
+F[主キー識別] --> H[正規化モデルの作成]
+G[エンティティへの割り当て] --> H[正規化モデルの作成]
+end
 ```
 
-```plantuml {scale: 0.7}
-@startuml
+</template>
+<template v-slot:right>
 
-package "Some Group" {
-  HTTP - [First Component]
-  [Another Component]
-}
+## 手順
 
-node "Other Groups" {
-  FTP - [Second Component]
-  [First Component] --> FTP
-}
+1. 対象領域となる画面や帳票を集める。
+1. Excel などで所属エンティティ、データ項目名などを整理する。
+1. データ項目に型、長さを定義する。
+1. 初期のデータモデルを整理する。
+1. 正規化する。
+1. 発生タイミングなどによりエンティティを分離する。
 
-cloud {
-  [Example 1]
-}
+</template>
 
+---
 
-database "MySql" {
-  folder "This is my folder" {
-    [Folder 3]
+# 画面、帳票を集める
+
+<style>
+  img {
+    height: 80%;
   }
-  frame "Foo" {
-    [Frame 4]
+</style>
+
+<div class="grid grid-cols-2 image">
+  <img border="rounded" src="zendesk_商品審査.png">
+  <img border="rounded" src="管理画面_商品審査.png">
+  <img border="rounded" src="管理画面_商品画像審査.png">
+</div>
+
+---
+
+# Excel で整理する
+
+<img border="rounded" src="商品画像審査_ボトムアップデータ分析_シート.png">
+
+<arrow v-click="1" x1="250" y1="120" x2="300" y2="150" color="#564" width="3" arrowSize="1" />
+<p v-after class="absolute bottom-105 left-10 transform">①画面から必要な項目を列挙する</p>
+
+<arrow v-click="2" x1="500" y1="100" x2="400" y2="170" color="#564" width="3" arrowSize="1" />
+<p v-after class="absolute bottom-105 left-125 transform">②画面単位でエンティティを括る</p>
+
+<arrow v-click="3" x1="580" y1="520" x2="600" y2="480" color="#564" width="3" arrowSize="1" />
+<p v-after class="absolute bottom-2 left-65 transform">③重複のない正式データ項目を付与する</p>
+
+<arrow v-click="4" x1="800" y1="250" x2="750" y2="230" color="#564" width="3" arrowSize="1" />
+<p v-after class="absolute bottom-68 left-203 transform">④繰返項目を抽出</p>
+
+---
+
+# 初期モデルを作成する
+
+<img border="rounded" src="商品画像審査_ボトムアップ分析_初期データモデル.png">
+
+---
+
+
+# 正規化を行う
+
+## 正規化の 1st ステップ
+
+繰り返し項目を取り除く
+
+<style>
+  img {
+    height: 70%;
   }
-}
+</style>
 
+<img border="rounded" src="商品画像審査_ボトムアップ分析_正規化1stStep.png">
 
-[Another Component] --> [Example 1]
-[Example 1] --> [Folder 3]
-[Folder 3] --> [Frame 4]
+---
 
-@enduml
+# 正規化を行う
+
+## 正規化の 2nd ステップ
+
+複合キーの一部に従属する属性は別エンティティとする
+
+<style>
+  img {
+    height: 70%;
+  }
+</style>
+
+<img border="rounded" src="商品画像審査_ボトムアップ分析_正規化2ndStep.png">
+
+---
+
+# 正規化を行う
+
+## 正規化の 3rd ステップ
+
+主キー以外の項目に依存する項目は別エンティティとする
+
+<style>
+  img {
+    height: 70%;
+  }
+</style>
+
+<img border="rounded" src="商品画像審査_ボトムアップ分析_正規化3rdStep.png">
+
+---
+layout: two-cols
+---
+
+<template v-slot:default>
+
+# トップダウンモデリング
+
+```mermaid {scale: 0.5}
+graph TD
+
+subgraph トップダウンモデリング
+A[ビジネス分析] --> B[エンティティモデルの作成]
+B --> C[主要属性モデルの作成]
+end
 ```
+
+</template>
+<template v-slot:right>
+
+## 手順
+
+1. ビジネスフローの作成
+1. エンティティの抽出
+1. エンティティ間の関連付け
+1. 主キーと主要属性の定義
+
+</template>
+
+---
+
+# ビジネスフローの作成
+
+<style>
+  img {
+    height: 80%;
+  }
+</style>
+
+<img border="rounded" src="商品画像審査_トップダウン分析_ビジネスフロー.png">
+
+---
+
+# 業務フローの作成
+
+<div>
+
+ちょっと縦に長いので別リンクにて...
+
+https://app.diagrams.net/#G1u88HRtHr7mV-y-TSU0bh9elAlgN9RuZf
 
 </div>
 
-[Learn More](https://sli.dev/guide/syntax.html#diagrams)
-
-
----
-layout: center
-class: text-center
 ---
 
-# Learn More
+# エンティティの抽出
 
-[Documentations](https://sli.dev) · [GitHub](https://github.com/slidevjs/slidev) · [Showcases](https://sli.dev/showcases.html)
+何をエンティティとして抽出するか
+
+### リソース系エンティティ
+
+主語や述語になるような名詞で表現できるもの
+
+- 人（社員、顧客）、組織（部署、工場）
+- 物（商品）、設備（配送拠点）
+- 顧客（出品者、購入者）
+
+<br />
+
+### イベント系エンティティ
+
+一連の活動を構成するアクティビティ
+
+- 購入、取引
+- 配送、納品
+- 入金、返金
+
+---
+
+# リソース系エンティティの抽出
+
+- 人
+  - 管理者、MD、TS
+  - PS
+- 物
+  - 商品
+  - 特集商品
+  - 商品画像
+
+---
+
+# リソース系エンティティの関連付け
+
+<img border="rounded" src="商品画像審査_トップダウン分析_リソース系エンティティ.png">
+
+---
+
+# イベント系エンティティの抽出
+
+- Zendesk
+- 商品審査, 正規品証明, 画像権利
+- 商品画像審査
+
+---
+
+# イベント系エンティティの関連付け
+
+<img border="rounded" src="商品画像審査_トップダウン分析_イベント系エンティティ.png">
+
+---
+
+# イベントとリソースの関連付け
+
+<img border="rounded" src="
+商品画像審査_トップダウン分析_イベントとリソースの関連付け
+.png">
+
+---
+
+# 主キーと主要属性の定義
+
+- 主キー候補の選定
+  - 値の変わらないもの
+  - できるだけ桁数の短いもの
+  - 複合キーの場合は連結個数が少なくなるようにする
+  - 非 NULL 項目でないこと
+
+上記を満たせない場合は、独自のキー（サロゲートキー）を設ける。
+
+---
+
+# 最終的に作成したモデル
+
+<style>
+  img {
+    height: 90%;
+  }
+</style>
+
+<img border="rounded" src="商品画像審査_トップダウン分析.png">
+
+---
+
+# ボトムアップモデルとトップダウンモデルの統合
+
+### 手順
+
+1. エンティティの併合
+1. 主キーの統一
+1. 関連付けの統合
+1. トップダウンモデルのみに現れているエンティティを追加する
+
+---
+
+# 最終的に作成したデータモデル
+
+<style>
+  img {
+    height: 90%;
+  }
+</style>
+
+<img border="rounded" src="商品画像審査_統合データモデル.png">
+
+---
+
+# なぜトップダウンモデルを作成するのか
+
+<div>
+
+ボトムアップモデルだけでも仕様を満たすデータモデルを作ることができそうである。
+
+しかし、トップダウンモデルを作ることでこんなメリットがある
+
+- ビジネスの全体感を捉えることができる。
+  - トップダウンモデルを作成して初めて見えてくるエンティティ、関連がある。
+    - イベント系エンティティはトップダウン分析でこそ見えてくる。
+    - 既存業務との統合は、新たに作成する画面の分析では得られてこない。
+- ビジネスサイドとの仕様の確認ができる。
+  - ER 図は非エンジニアが読み解けないが、業務フローなら見ることができる。
+
+</div>
+
+---
+
+# まとめ
+
+- データベースの論理設計はボトムアップモデル、トップダウンモデルの両面から行う。
+  - ボトムアップモデル: 画面、帳票から設計をする。
+  - トップダウンモデル: ビジネスフローから設計をする。
+
+- 論理設計のプロセスは分解すると以下の工程がある。
+  1. エンティティの抽出
+  1. エンティティ間の関連付け
+  1. 主キーの定義
+  1. 項目の定義
+
+- トップダウンモデル、ボトムアップモデルを統合し、  
+  全体の見直しをすることで適切なエンティティ、関連付けをすることができる。
+
+---
+
