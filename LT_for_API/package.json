@@ -12,6 +12,7 @@
   },
   "name": "lt-for-api",
   "devDependencies": {
-    "@iconify-json/ion": "^1.1.1"
+    "@iconify-json/ion": "^1.1.1",
+    "playwright-chromium": "^1.22.2"
   }
 }
