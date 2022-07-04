@@ -7,8 +7,11 @@
   },
   "dependencies": {
     "@slidev/cli": "^0.30.3",
-    "@slidev/theme-default": "*",
+    "@slidev/theme-default": "^0.21.2",
     "@slidev/theme-seriph": "*"
   },
-  "name": "lt-for-db"
+  "name": "lt-for-db",
+  "devDependencies": {
+    "playwright-chromium": "^1.23.1"
+  }
 }
